@@ -1,0 +1,11 @@
+vram address 16b8
+2 byte assignments
+3024 - 0
+3124 - 1
+3524 - 5
+352a - :
+
+4124 - A
+
+
+then write 0008 to AEB8 to AEBF...?

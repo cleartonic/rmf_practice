@@ -1,5 +1,9 @@
 hirom
+
+incsrc defines.asm
 incsrc data.asm
+incsrc timer.asm
+incsrc timer_text.asm
 
 org $C0FFD8
 dw $07 ; set sram to 128kb, the max
@@ -16,8 +20,14 @@ nop
 nop
 nop
 
+
+
 org $C48000 ; free space
 InStageHook:
+
+JSL TimerFunction
+
+
 
 ; PHA ; store a
 
@@ -85,11 +95,90 @@ ldy #$0004 ;previous instructions at C1107E
 LDA $2a,x ;previous instructions at C1107E
 RTL
 
+
+
+
+
+
+
+
+
+
+
+
 org $C49000 ; free space
+
 GameModeSwitchHook:
+
+
 
 ; load and branch on game mode value
 PHA
+
+
+; write data for tileset numbers to VRAM
+; Start FBDFC0
+; End   FBE080
+; Delta C0, 60 for index (half of C0)
+
+PHX
+PHY
+
+LDX #$00
+
+; use onscreem_timer1 for temp variable
+lda #$00
+sta !onscreen_timer1 
+
+TilesetLoop:
+
+; digit4
+; vram address
+rep #$20
+clc
+txa
+lsr
+sta !onscreen_timer1 
+asl
+tax
+LDA #$0180 ; VRAM address 0300. Just multiply LDA address by 2 for VRAM address
+ADC !onscreen_timer1 
+STA $2116 
+; data to load
+; sep #$20
+LDA $FBDFC0, X
+
+; rep #$20
+STA $2118
+
+
+INX
+INX
+CPX #$C0
+BNE TilesetLoop
+
+TilesetLoopFinish:
+sep #$20
+
+PLY
+PLX
+
+
+; clear out timer vals
+lda #$00
+sta !onscreen_timer1 
+sta !onscreen_timer2 
+sta !onscreen_timer3 
+sta !onscreen_timer4
+sta !onscreen_flash_timer1 
+sta !onscreen_flash_timer2 
+sta !onscreen_flash_timer3 
+sta !onscreen_flash_timer4
+sta !room_flash_timer
+sta !room_flash_control
+
+
+
 
 ; Reset CDs upon loading a stage
 LDA #$00
@@ -364,3 +453,48 @@ lda $865D,y
 TAY
 LDA $866D,y
 RTL
+
+
+
+
+org $C05749
+JML ScreenTransitionHook
+
+org $C48400
+
+
+
+; here we clear out the timer, but also flash the room time for 120f
+ScreenTransitionHook:
+
+
+; set up flash timer if control is not set, then set control
+LDA !room_flash_control
+BNE SkipFlashControl
+lda !onscreen_timer4
+sta !onscreen_flash_timer4
+lda !onscreen_timer3
+sta !onscreen_flash_timer3
+lda !onscreen_timer2
+sta !onscreen_flash_timer2
+lda !onscreen_timer1
+sta !onscreen_flash_timer1
+LDA #$01
+STA !room_flash_control
+LDA #$78 ; 120 frames
+STA !room_flash_timer
+
+SkipFlashControl: 
+sep #$20
+
+lda #$00
+sta !onscreen_timer4
+sta !onscreen_timer3
+sta !onscreen_timer2
+sta !onscreen_timer1
+
+; original code
+REP #$30
+LDA $98
+AND #$00FF
+JML $C05750
