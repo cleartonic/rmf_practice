@@ -9,6 +9,11 @@ org $C0FFD8
 dw $07 ; set sram to 128kb, the max
 
 ; Hooks
+org $c00014
+JSL TimerFunction
+nop
+
+
 org $C1107E
 JSL InStageHook
 nop
@@ -25,7 +30,6 @@ nop
 org $C48000 ; free space
 InStageHook:
 
-JSL TimerFunction
 
 
 

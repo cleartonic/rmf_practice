@@ -4,7 +4,7 @@ hirom
 org $C48200
 TimerFunction:
 
-
+sep #$20
 ; check first digit and increase next. repeat pattern for all 4 digits
 lda !onscreen_timer1
 cmp #$09
@@ -283,5 +283,8 @@ dec a
 sta !room_flash_timer
 
 FinishTimerFull:
-rep #$20
+sep #$20
+
+inc $00d2
+ldx #$00
 RTL
