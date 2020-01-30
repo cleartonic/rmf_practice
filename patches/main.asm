@@ -39,7 +39,7 @@ REP #$20
 LDA $00A1 ; store controller input into a
 
 ; check for rng change trigger
-CMP #$2030 ; check select, l, r
+CMP #$0050 ; check select, l, r
 BEQ ChangeRNG
 
 ; check for max hp/wp trigger
