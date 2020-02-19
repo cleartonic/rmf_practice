@@ -2,12 +2,12 @@
 This is an IPS patch for Rockman & Forte for speedrun practice. 
 
 ### Features 
-- Stage select is always open, and assigns the speedrun weapons/items/equipment upon load. Stage select has greyed out bosses, but upon loading they will be properly spawned. Only Rockman's placements available for now.
+- Stage select is always open, and assigns the speedrun weapons/items/equipment upon load. Stage select has greyed out bosses, but upon loading they will be properly spawned. Rockman and Forte both have separate weapon loadouts, following standard speedrun routes (Astro 4th for Rockman, Ground 4th for Forte)
 
 - While in any stage:
   - Select + B + Y = Return instantly to stage select
   - Select + B + X = Restore all HP and Weapon Energy
-  - Select + L + R = Change RNG value (increase by 0x0001 each frame)
+  - R + X = Change RNG value (increase by 0x0001 each frame)
 
 - While on stage select:
   - Hold L upon King Stage select: Go to King Stage 2

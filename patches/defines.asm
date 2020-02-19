@@ -10,3 +10,4 @@ hirom
 !onscreen_flash_timer1 = $7E9A13
 !room_flash_timer = $7E9A14
 !room_flash_control = $7E9A15
+!mode = $0b76

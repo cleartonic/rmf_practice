@@ -186,108 +186,12 @@ sta !room_flash_control
 
 ; Reset CDs upon loading a stage
 LDA #$00
+LDX #$64
+SRAMLoop:
+DEX
+STA $206000, x
+BNE SRAMLoop
 
-; this could be made much more efficient with [STA, x] loop
-STA $206000
-STA $206001
-STA $206002
-STA $206003
-STA $206004
-STA $206005
-STA $206006
-STA $206007
-STA $206008
-STA $206009
-STA $20600a
-STA $20600b
-STA $20600c
-STA $20600d
-STA $20600e
-STA $20600f
-STA $206010
-STA $206011
-STA $206012
-STA $206013
-STA $206014
-STA $206015
-STA $206016
-STA $206017
-STA $206018
-STA $206019
-STA $20601a
-STA $20601b
-STA $20601c
-STA $20601d
-STA $20601e
-STA $20601f
-STA $206020
-STA $206021
-STA $206022
-STA $206023
-STA $206024
-STA $206025
-STA $206026
-STA $206027
-STA $206028
-STA $206029
-STA $20602a
-STA $20602b
-STA $20602c
-STA $20602d
-STA $20602e
-STA $20602f
-STA $206030
-STA $206031
-STA $206032
-STA $206033
-STA $206034
-STA $206035
-STA $206036
-STA $206037
-STA $206038
-STA $206039
-STA $20603a
-STA $20603b
-STA $20603c
-STA $20603d
-STA $20603e
-STA $20603f
-STA $206040
-STA $206041
-STA $206042
-STA $206043
-STA $206044
-STA $206045
-STA $206046
-STA $206047
-STA $206048
-STA $206049
-STA $20604A
-STA $20604B
-STA $20604C
-STA $20604D
-STA $20604E
-STA $20604F
-STA $206050
-STA $206051
-STA $206052
-STA $206053
-STA $206054
-STA $206055
-STA $206056
-STA $206057
-STA $206058
-STA $206059
-STA $20605a
-STA $20605b
-STA $20605C
-STA $20605D
-STA $20605E
-STA $20605F
-STA $206060
-STA $206061
-STA $206062
-STA $206063
 
 LDA $00E0
 CMP #$0A ; compare to stage select
@@ -328,7 +232,7 @@ STA $0B8E
 STA $0B90
 LDA #$FF ; set complete 8 weapons stage
 STA $0B79
-BRA GameModeSwitchReturn
+JMP GameModeSwitchReturn
 
 GameModeNotStageSelect:
 
@@ -338,11 +242,6 @@ GameModeNotStageSelect:
 !itemslot3 = $7e0b99
 
 ; Condition for any other mode stage select met
-
-
-; ; Store X & Y
-; PHX 
-; PHY
 
 
 ; Load stage ID, which will offset the data table at C49800 for weapon/stage loadout
@@ -367,36 +266,42 @@ TAX ; transfer to X
 ; Because CAPCOM decided to use a completely different indexing system for stage IDs compared to stage COMPLETE IDs, we can't use any relative addressing past what we put into ROM. So... hardcode each entry. Thanks.
 
 ;LDY #$0E
-   
-	; Load Dynamo stage
+
+; Load mode and switch for ROCKMAN or FORTE
+LDA !mode
+BEQ LoadRockmanWeapons ; #$00
+BNE LoadForteWeapons ; #$01
+
+LoadRockmanWeapons:   
+	; Load Dynamo
 	LDA $C49801, X
 	STA $7e0b84
 	INX
-	; Load Cold stage
+	; Load Cold
 	LDA $C49801, X
 	STA $7e0b8C
 	INX	
-	; Load Ground stage
+	; Load Ground
 	LDA $C49801, X
 	STA $7e0b82
 	INX		
-	; Load Tengu stage
+	; Load Tengu
 	LDA $C49801, X
 	STA $7e0b8E
 	INX		
-	; Load Astro stage
+	; Load Astro
 	LDA $C49801, X
 	STA $7e0b90
 	INX		
-	; Load Pirate stage
+	; Load Pirate
 	LDA $C49801, X
 	STA $7e0b86
 	INX		
-	; Load Burner stage
+	; Load Burner
 	LDA $C49801, X
 	STA $7e0b88
 	INX		
-	; Load Magic stage
+	; Load Magic
 	LDA $C49801, X
 	STA $7e0b8A
 	INX		
@@ -417,31 +322,62 @@ TAX ; transfer to X
 	LDA $C49801, X
 	STA $7E0B9A
 	INX
+    BRA WeaponsReady
+    
+LoadForteWeapons:   
+	; Load Ground
+	LDA $C49901, X
+	STA $7e0b82
+	INX		
+	; Load Dynamo
+	LDA $C49901, X
+	STA $7e0b84
+	INX
+	; Load Pirate
+	LDA $C49901, X
+	STA $7e0b86
+	INX		
+	; Load Burner
+	LDA $C49901, X
+	STA $7e0b88
+	INX		
+	; Load Magic
+	LDA $C49901, X
+	STA $7e0b8A
+	INX		
+	; Load Cold
+	LDA $C49901, X
+	STA $7e0b8C
+	INX	
+	; Load Tengu
+	LDA $C49901, X
+	STA $7e0b8E
+	INX		
+	; Load Astro
+	LDA $C49901, X
+	STA $7e0b90
+	INX		
+
+
+	; Load ITEM_SLOT1
+	LDA $C49901, X
+	STA $7E0b97
+	INX
+	; Load ITEM_SLOT2
+	LDA $C49901, X
+	STA $7E0b98
+	INX
+	; Load ITEM_SLOT3
+	LDA $C49901, X
+	STA $7E0b99
+	INX
+	; Load COUNTERATTACKER_ACTIVE
+	LDA $C49901, X
+	STA $7E0B9A
+	INX
+    
+WeaponsReady:
       
-   
-   ; BEQ .ret
-; .loop 
-	; LDA $C49801, X
-	; PHX
-	; TYX
-	; STA !stagesclearedstart, X
-	; DEX
-	; DEX
-	; TXY
-	; PLX
-	; DEX
-	
-	; ; Check if X has hit the original offset, saved at OFFSET1
-	; TXA
-	; CMP $7E2400
-	; BNE .loop
-; .ret
-
-
-
-; ; Restore X & Y
-; PLX
-; PLY
 
 BRA GameModeSwitchReturn
 
@@ -502,3 +438,28 @@ REP #$30
 LDA $98
 AND #$00FF
 JML $C05750
+
+
+
+
+; char select to map
+org $c05ba8
+JML $C48100
+
+org $C48100
+pha
+LDA #$0A ; Game mode: stage select 
+STA $00E0 ; Game mode
+LDA #$00 ; Value of 00 here means to not trigger loading the stage immediately
+STA $00E1 ; Game mode
+
+; original code
+pla
+ldx $0b76
+lda $8a43,x
+tay
+JML $c05baf
+
+
+org $c05bb2
+lda #$00
