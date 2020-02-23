@@ -273,26 +273,14 @@ BEQ LoadRockmanWeapons ; #$00
 BNE LoadForteWeapons ; #$01
 
 LoadRockmanWeapons:   
-	; Load Dynamo
-	LDA $C49801, X
-	STA $7e0b84
-	INX
-	; Load Cold
-	LDA $C49801, X
-	STA $7e0b8C
-	INX	
 	; Load Ground
 	LDA $C49801, X
 	STA $7e0b82
 	INX		
-	; Load Tengu
+	; Load Dynamo
 	LDA $C49801, X
-	STA $7e0b8E
-	INX		
-	; Load Astro
-	LDA $C49801, X
-	STA $7e0b90
-	INX		
+	STA $7e0b84
+	INX
 	; Load Pirate
 	LDA $C49801, X
 	STA $7e0b86
@@ -305,6 +293,19 @@ LoadRockmanWeapons:
 	LDA $C49801, X
 	STA $7e0b8A
 	INX		
+	; Load Cold
+	LDA $C49801, X
+	STA $7e0b8C
+	INX	
+	; Load Tengu
+	LDA $C49801, X
+	STA $7e0b8E
+	INX		
+	; Load Astro
+	LDA $C49801, X
+	STA $7e0b90
+	INX		
+
 
 	; Load ITEM_SLOT1
 	LDA $C49801, X
@@ -322,6 +323,7 @@ LoadRockmanWeapons:
 	LDA $C49801, X
 	STA $7E0B9A
 	INX
+
     BRA WeaponsReady
     
 LoadForteWeapons:   
