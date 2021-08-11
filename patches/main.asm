@@ -26,6 +26,10 @@ nop
 nop
 
 
+org $C01C36
+JSL BossCheckingHook
+nop
+nop
 
 org $C48000 ; free space
 InStageHook:
@@ -66,6 +70,8 @@ RestoreHPWP:
 SEP #$20
 LDA #$1C
 STA $0C2F
+LDA #$09
+STA $0B7E
 
 ; set all weapons to 28. A still has #$1C, which is 28, max weapon
 
@@ -180,6 +186,12 @@ sta !onscreen_flash_timer3
 sta !onscreen_flash_timer4
 sta !room_flash_timer
 sta !room_flash_control
+sta !onscreen_stage_timer1 
+sta !onscreen_stage_timer2 
+sta !onscreen_stage_timer3 
+sta !onscreen_stage_timer4
+sta !stage_flash_timer
+sta !stage_flash_control
 
 
 
@@ -402,7 +414,7 @@ RTL
 org $C05749
 JML ScreenTransitionHook
 
-org $C48400
+org $C48A00
 
 
 
@@ -450,6 +462,8 @@ JML $C48100
 
 org $C48100
 pha
+LDA #$09
+STA $0B7E
 LDA #$0A ; Game mode: stage select 
 STA $00E0 ; Game mode
 LDA #$00 ; Value of 00 here means to not trigger loading the stage immediately
@@ -465,3 +479,50 @@ JML $c05baf
 
 org $c05bb2
 lda #$00
+
+
+org $C48500
+BossCheckingHook:
+phx
+
+
+lda !onscreen_stage_timer4
+sta !onscreen_flash_timer4
+lda !onscreen_stage_timer3
+sta !onscreen_flash_timer3
+lda !onscreen_stage_timer2
+sta !onscreen_flash_timer2
+lda !onscreen_stage_timer1
+sta !onscreen_flash_timer1
+LDA #$01
+STA !room_flash_control
+LDA #$78 ; 120 frames
+STA !room_flash_timer
+
+
+
+sep #$20
+plx
+; original code
+ldy $8234,x 
+lda $0b80,y
+rtl
+
+
+
+
+org $c10e9c
+sep #$20 
+lda #$00
+sta $00fb
+xba
+lda #$00
+sta $00fc
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop

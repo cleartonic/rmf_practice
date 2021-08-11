@@ -4,6 +4,10 @@ hirom
 org $C48200
 TimerFunction:
 
+
+;;;;;;
+; Screen timer
+;;;;;;
 sep #$20
 ; check first digit and increase next. repeat pattern for all 4 digits
 lda !onscreen_timer1
@@ -20,7 +24,7 @@ clc
 lda #$01
 adc !onscreen_timer1
 sta !onscreen_timer1
-JMP FinishMainTimer
+JMP FinishScreenTimer
 
 
 
@@ -41,7 +45,7 @@ clc
 lda #$01
 adc !onscreen_timer2
 sta !onscreen_timer2
-JMP FinishMainTimer
+JMP FinishScreenTimer
 
 
 
@@ -61,7 +65,7 @@ clc
 lda #$01
 adc !onscreen_timer3
 sta !onscreen_timer3
-JMP FinishMainTimer
+JMP FinishScreenTimer
 
 
 
@@ -74,19 +78,102 @@ bne IncreaseDigit4
 ; if it's 9, set it to zero, then move on to next digit
 lda #$00
 sta !onscreen_timer4
-JMP FinishMainTimer ; out of digits, so stop increasing
+JMP FinishScreenTimer ; out of digits, so stop increasing
 
 IncreaseDigit4:
 clc
 lda #$01
 adc !onscreen_timer4
 sta !onscreen_timer4
-JMP FinishMainTimer
+JMP FinishScreenTimer
+
+
+FinishScreenTimer:
+;;;;;;
+; Stage timer
+;;;;;;
+; check first digit and increase next. repeat pattern for all 4 digits
+lda !onscreen_stage_timer1
+cmp #$09
+bne IncreaseStageDigit1
+
+; if it's 9, set it to zero, then move on to next digit
+lda #$00
+sta !onscreen_stage_timer1
+JMP TimerStageFunctionDigit2
+
+IncreaseStageDigit1:
+clc
+lda #$01
+adc !onscreen_stage_timer1
+sta !onscreen_stage_timer1
+JMP FinishStageTimer
 
 
 
 
-FinishMainTimer:
+
+TimerStageFunctionDigit2:
+lda !onscreen_stage_timer2
+cmp #$09
+bne IncreaseStageDigit2
+
+; if it's 9, set it to zero, then move on to next digit
+lda #$00
+sta !onscreen_stage_timer2
+JMP TimerStageFunctionDigit3
+
+IncreaseStageDigit2:
+clc
+lda #$01
+adc !onscreen_stage_timer2
+sta !onscreen_stage_timer2
+JMP FinishStageTimer
+
+
+
+
+TimerStageFunctionDigit3:
+lda !onscreen_stage_timer3
+cmp #$09
+bne IncreaseStageDigit3
+
+; if it's 9, set it to zero, then move on to next digit
+lda #$00
+sta !onscreen_stage_timer3
+JMP TimerStageFunctionDigit4
+
+IncreaseStageDigit3:
+clc
+lda #$01
+adc !onscreen_stage_timer3
+sta !onscreen_stage_timer3
+JMP FinishStageTimer
+
+
+
+
+TimerStageFunctionDigit4:
+lda !onscreen_stage_timer4
+cmp #$09
+bne IncreaseStageDigit4
+
+; if it's 9, set it to zero, then move on to next digit
+lda #$00
+sta !onscreen_stage_timer4
+JMP FinishStageTimer ; out of digits, so stop increasing
+
+IncreaseStageDigit4:
+clc
+lda #$01
+adc !onscreen_stage_timer4
+sta !onscreen_stage_timer4
+JMP FinishStageTimer
+
+
+
+FinishStageTimer:
+
 ; every loaded onscreen_timer needs #$30 added to it 
 
 
